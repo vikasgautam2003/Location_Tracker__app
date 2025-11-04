@@ -3,6 +3,10 @@ const app = express();
 const http = require('http');
 const path = require('path');
 const socketio = require('socket.io');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 
 const server = http.createServer(app);
 const io = socketio(server);
@@ -18,6 +22,15 @@ io.on("connection", (socket) => {
         io.emit("Received-location", {id: socket.id, ...data})
     })
 });
+
+
+
+app.get('/config', (req, res) => {
+  res.json({
+    mapKey: process.env.ACCESS_KEY
+  });
+});
+
 
 app.get("/", (req, res) => {
     res.render("index");

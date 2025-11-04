@@ -85,6 +85,7 @@ if (navigator.geolocation) {
   navigator.geolocation.watchPosition(
     (pos) => {
       const { latitude, longitude } = pos.coords;
+      updateSidebar(latitude, longitude);
       coordsEl.textContent = `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}`;
       socket.emit("locationUpdate", { latitude, longitude });
 
@@ -119,3 +120,121 @@ socket.on("userDisconnected", (id) => {
     delete markers[id];
   }
 });
+
+
+
+
+
+
+const infoBtn = document.getElementById("infoToggle");
+const infoPanel = document.getElementById("infoPanel");
+const closePanel = document.getElementById("closePanel");
+const latlonEl = document.getElementById("latlon");
+const locNameEl = document.getElementById("locName");
+const photosEl = document.getElementById("photos");
+
+
+
+let isPanelOpen = false;
+let currentCoords = {lat: null, lon: null};
+
+infoBtn.addEventListener("click", () => {
+  isPanelOpen = !isPanelOpen;
+  togglePanel();
+})
+
+
+closePanel.addEventListener("click", () => {
+  isPanelOpen = false;
+  togglePanel();
+});
+
+
+function togglePanel() {
+  if (isPanelOpen) {
+    infoPanel.classList.remove("-translate-x-full");
+  
+  } else {
+    infoPanel.classList.add("-translate-x-full");
+    document.getElementById("map").style.width = "100%";
+  }
+ 
+}
+
+
+
+async function fetchLocationName(lat, lon) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+    const data = await res.json();
+
+    locNameEl.textContent = data.display_name || "Unknown location";
+  } catch (err) {
+    locNameEl.textContent = "Unable to fetch location name";
+  }
+}
+
+
+console.log("📡 script.js loaded successfully!");
+
+window.onload = async () => {
+  console.log("⚙️ Fetching /config...");
+
+  try {
+    const res = await fetch('/config');
+    const data = await res.json();
+    const ACCESS_KEY = data.mapKey;
+
+    console.log("✅ ACCESS_KEY received:", ACCESS_KEY);
+  } catch (err) {
+    console.error("❌ Error fetching config:", err);
+  }
+};
+
+
+
+
+async function fetchLocationPhotos(query) {
+
+  const res = await fetch('/config');
+    const data = await res.json();
+    const ACCESS_KEY = data.mapKey;
+
+    console.log("Access Key from server:", ACCESS_KEY);
+
+
+   photosEl.innerHTML = "<p class='text-gray-400'>Loading photos...</p>";
+
+   try{
+
+    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=4&client_id=${ACCESS_KEY}`);
+    const data = await res.json();
+
+    if(!data.results.length){
+      photosEl.innerHTML = "<p class='text-gray-400'>No photos found</p>";
+      return;
+    }
+
+    photosEl.innerHTML = data.results.map((img) => `<img src="${img.urls.thumb}" alt="${img.alt_description}" class="rounded shadow">`)
+      .join("");
+
+
+   } catch (err) {
+    photosEl.innerHTML = "<p class='text-gray-400'>Error loading images</p>";
+  }
+
+
+}
+
+
+
+
+
+function updateSidebar(lat, lon) {
+  currentCoords = { lat, lng: lon };
+  latlonEl.textContent = `Lat: ${lat.toFixed(5)}, Lng: ${lon.toFixed(5)}`;
+  fetchLocationName(lat, lon).then(() => {
+    const locText = locNameEl.textContent.split(",")[0];
+    fetchLocationPhotos(locText);
+  });
+}

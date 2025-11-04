@@ -20,7 +20,7 @@
 
 
 
-
+<!-- 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +51,268 @@
       <button id="darkModeBtn" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-600 transition">🌗</button>
     </div>
   </header>
+
+<button id="infoToggle" 
+  class="absolute bottom-5 left-5 z-[1000] bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-500 transition">
+  📍 Location Info
+</button>
+
+
+<div id="infoPanel" 
+  class="fixed top-[60px] left-0 w-1/2 h-[calc(100vh-60px)] bg-gray-800 text-white p-6 shadow-2xl transform -translate-x-full transition-transform duration-300 overflow-y-auto z-[2000]">
+  
+  <h2 class="text-xl font-semibold mb-4">📍 Location Details</h2>
+  
+  <p id="locName" class="text-gray-300 mb-2">Fetching location...</p>
+  <p id="latlon" class="text-gray-400 mb-4">Lat: —, Lng: —</p>
+
+  <div id="photos" class="grid grid-cols-2 gap-2"></div>
+
+  <button id="closePanel" 
+    class="mt-6 bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">
+    Close
+  </button>
+</div>
+
   <div id="map"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/script.js"></script>
+</body>
+</html> -->
+
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌍 Live Location Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+    integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <style>
+    /* Key Change 1: 
+      - Make body fill the screen and hide overflow to prevent scrolling.
+      - Make the map a fixed, full-screen background layer (z-index: 10).
+      - All other UI will float on top with a higher z-index.
+    */
+    body, html { 
+      height: 100%; 
+      margin: 0; 
+      padding: 0; 
+      overflow: hidden; /* Prevents scrollbars */
+    }
+    #map { 
+      height: 100vh; 
+      width: 100vw; 
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10; /* Base layer */
+    }
+    .leaflet-control-attribution { 
+      font-size: 0.75rem !important; 
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+
+  <div id="map"></div>
+
+  <div class="absolute top-0 left-0 z-20 w-full p-4 flex flex-wrap justify-between items-start gap-4">
+    
+    <div class="flex-shrink-0 bg-slate-900/70 backdrop-blur-lg border border-slate-700 rounded-xl p-4 shadow-xl">
+      <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500 mb-2">
+        Gautam Tracker
+      </h1>
+      <div class="flex items-center gap-2">
+        <span id="status-dot" class="h-3 w-3 bg-red-500 rounded-full animate-pulse"></span>
+        <span id="status" class="text-sm font-medium text-red-400">Disconnected</span>
+      </div>
+    </div>
+
+    <div class="flex-shrink-0 bg-slate-900/70 backdrop-blur-lg border border-slate-700 rounded-xl p-4 shadow-xl flex flex-col items-end gap-3">
+      <p id="coords" class="text-sm text-slate-300 font-mono">Lat: —, Lng: —</p>
+      <button id="darkModeBtn" class="bg-slate-800/80 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-700 transition shadow-md">🌗</button>
+    </div>
+  </div>
+
+  <button id="infoToggle" 
+    class="absolute bottom-4 left-4 z-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3 rounded-lg shadow-lg hover:from-blue-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+      <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.1.4-.223.654-.369.39-.22.86-.49 1.38-.793.52-.304 1.109-.68 1.76-1.105C15.071 15.8 16.02 14.88 16.6 13.738c.58-.933 1.02-2.072 1.28-3.388.26-1.316.3-2.786.1-4.31-.19-1.523-.53-3.093-1.02-4.636a.904.904 0 0 0-1.74.86c.44 1.39.75 2.76.92 4.1.15 1.32.12 2.53-.1 3.63-.22 1.107-.58 2.06-1.06 2.88a5.99 5.99 0 0 1-2.09 2.144c-.64.4-1.21.73-1.73.99-.48.24-.91.43-1.26.58-.28.12-.5.21-.66.27-.12.05-.22.08-.28.1-.03.01-.05.02-.06.02a.633.633 0 0 1-.14-.04c-.03-.01-.06-.02-.08-.03a.51.51 0 0 1-.06-.03c-.03-.01-.05-.02-.06-.02a5.74 5.74 0 0 0-.28-.14c-.19-.1-.4-.223-.66-.37-.39-.22-.86-.49-1.38-.793-.52-.304-1.109-.68-1.76-1.105C4.928 15.8 3.98 14.88 3.4 13.738c-.58-.933-1.02-2.072-1.28-3.388-.26-1.316-.3-2.786-.1-4.31.19-1.523.53-3.093 1.02-4.636a.904.904 0 0 0-1.74-.86c-.44-1.39-.75-2.76-.92-4.1-.15-1.32-.12-2.53.1-3.63.22-1.107.58-2.06 1.06-2.88a5.99 5.99 0 0 1 2.09-2.144c.64-.4 1.21-.73 1.73-.99.48-.24.91.43-1.26.58-.28.12-.5.21-.66.27-.12.05-.22.08-.28.1-.03.01-.05.02-.06.02a.633.633 0 0 1-.14-.04c-.03-.01-.06-.02-.08-.03-.02-.01-.04-.02-.06-.03s-.04-.02-.06-.02a5.74 5.74 0 0 0-.28-.14c-.19-.1-.4-.223-.66-.37-.39-.22-.86-.49-1.38-.793C2.06 3.62 1.02 5.068 1.02 7.37c0 1.55.32 3.03.88 4.39.56 1.36 1.36 2.65 2.36 3.79 1 1.14 2.17 2.08 3.45 2.8.33.18.64.35.94.49.15.07.28.13.4.18.06.03.12.05.16.07.02.01.04.01.05.02.01.005.02.01.03.01.01.005.02.01.03.01h.002z" clip-rule="evenodd" />
+    </svg>
+    <span>Location Info</span>
+  </button>
+
+
+  <div id="infoPanel" 
+    class="fixed top-0 left-0 z-30 h-screen w-full sm:w-96
+           bg-slate-950/80 backdrop-blur-lg shadow-2xl border-r border-slate-700
+           flex flex-col
+           transform -translate-x-full transition-transform duration-500 ease-in-out">
+    
+    <div class="flex-shrink-0 flex justify-between items-center p-4 border-b border-slate-700">
+      <h2 class="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+        📍 Location Details
+      </h2>
+      <button id="closePanel" 
+        class="text-slate-400 hover:text-white hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex-grow p-6 overflow-y-auto">
+      <div class="space-y-4">
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Location Name</p>
+          <p id="locName" class="text-lg text-slate-100">Fetching location...</p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Coordinates</p>
+          <p id="latlon" class="text-base text-slate-300 font-mono">Lat: —, Lng: —</p>
+        </div>
+        
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Nearby Photos</p>
+          <div id="photos" class="grid grid-cols-2 gap-4">
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/script.js"></script>
+</body>
+</html> -->
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌍 Live Location Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+    integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <style>
+    body, html { 
+      height: 100%; 
+      margin: 0; 
+      padding: 0; 
+      overflow: hidden;
+    }
+    #map { 
+      height: 100vh; 
+      width: 100vw; 
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+    .leaflet-control-attribution { 
+      font-size: 0.75rem !important; 
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+
+  <div id="map"></div>
+
+  <div class="absolute top-0 left-0 z-20 w-full p-3 sm:p-4 flex flex-col sm:flex-row sm:justify-between items-start gap-3">
+    
+    <div class="flex-shrink-0 bg-slate-900/70 backdrop-blur-lg border border-slate-700 rounded-xl p-3 sm:p-4 shadow-xl">
+      <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500 mb-2">
+        Gautam Tracker
+      </h1>
+      <div class="flex items-center gap-2">
+        <span id="status-dot" class="h-3 w-3 bg-red-500 rounded-full animate-pulse"></span>
+        <span id="status" class="text-sm font-medium text-red-400">Disconnected</span>
+      </div>
+    </div>
+
+    <div class="flex-shrink-0 bg-slate-900/70 backdrop-blur-lg border border-slate-700 rounded-xl p-3 sm:p-4 shadow-xl flex flex-col items-end gap-3">
+      <p id="coords" class="text-sm text-slate-300 font-mono">Lat: —, Lng: —</p>
+      <button id="darkModeBtn" class="bg-slate-800/80 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-700 transition shadow-md">🌗</button>
+    </div>
+  </div>
+
+  <button id="infoToggle" 
+    class="absolute bottom-4 left-4 z-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white 
+           px-4 py-2 sm:px-5 sm:py-3 rounded-lg shadow-lg 
+           hover:from-blue-500 hover:to-indigo-500 transition-all duration-300 
+           transform hover:scale-105 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+      <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.1.4-.223.654-.369.39-.22.86-.49 1.38-.793.52-.304 1.109-.68 1.76-1.105C15.071 15.8 16.02 14.88 16.6 13.738c.58-.933 1.02-2.072 1.28-3.388.26-1.316.3-2.786.1-4.31-.19-1.523-.53-3.093-1.02-4.636a.904.904 0 0 0-1.74.86c.44 1.39.75 2.76.92 4.1.15 1.32.12 2.53-.1 3.63-.22 1.107-.58 2.06-1.06 2.88a5.99 5.99 0 0 1-2.09 2.144c-.64.4-1.21.73-1.73.99-.48.24-.91.43-1.26.58-.28.12-.5.21-.66.27-.12.05-.22.08-.28.1-.03.01-.05.02-.06.02a.633.633 0 0 1-.14-.04c-.03-.01-.06-.02-.08-.03a.51.51 0 0 1-.06-.03c-.03-.01-.05-.02-.06-.02a5.74 5.74 0 0 0-.28-.14c-.19-.1-.4-.223-.66-.37-.39-.22-.86-.49-1.38-.793-.52-.304-1.109-.68-1.76-1.105C4.928 15.8 3.98 14.88 3.4 13.738c-.58-.933-1.02-2.072-1.28-3.388-.26-1.316-.3-2.786-.1-4.31.19-1.523.53-3.093 1.02-4.636a.904.904 0 0 0-1.74-.86c-.44-1.39-.75-2.76-.92-4.1-.15-1.32-.12-2.53.1-3.63.22 1.107.58 2.06 1.06 2.88a5.99 5.99 0 0 1 2.09-2.144c.64-.4 1.21.73 1.73-.99.48.24.91.43-1.26.58-.28.12-.5.21-.66.27-.12.05-.22.08-.28.1-.03.01-.05.02-.06.02a.633.633 0 0 1-.14-.04c-.03-.01-.06-.02-.08-.03-.02-.01-.04-.02-.06-.03s-.04-.02-.06-.02a5.74 5.74 0 0 0-.28-.14c-.19-.1-.4-.223-.66-.37-.39-.22-.86-.49-1.38-.793C2.06 3.62 1.02 5.068 1.02 7.37c0 1.55.32 3.03.88 4.39.56 1.36 1.36 2.65 2.36 3.79 1 1.14 2.17 2.08 3.45 2.8.33.18.64.35.94.49.15.07.28.13.4.18.06.03.12.05.16.07.02.01.04.01.05.02.01.005.02.01.03.01.01.005.02.01.03.01h.002z" clip-rule="evenodd" />
+    </svg>
+    <span class="hidden sm:inline">Location Info</span>
+  </button>
+
+
+  <div id="infoPanel" 
+    class="fixed top-0 left-0 z-30 h-screen w-full sm:w-96
+           bg-slate-950/80 backdrop-blur-lg shadow-2xl border-r border-slate-700
+           flex flex-col
+           transform -translate-x-full transition-transform duration-500 ease-in-out">
+    
+    <div class="flex-shrink-0 flex justify-between items-center p-4 border-b border-slate-700">
+      <h2 class="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+        📍 Location Details
+      </h2>
+      <button id="closePanel" 
+        class="text-slate-400 hover:text-white hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex-grow p-6 overflow-y-auto">
+      <div class="space-y-4">
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Location Name</p>
+          <p id="locName" class="text-lg text-slate-100">Fetching location...</p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Coordinates</p>
+          <p id="latlon" class="text-base text-slate-300 font-mono">Lat: —, Lng: —</p>
+        </div>
+        
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Nearby Photos</p>
+          <div id="photos" class="grid grid-cols-2 gap-4">
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/script.js"></script>
