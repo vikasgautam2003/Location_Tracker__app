@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,5 +15,45 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/script.js"></script>
     
+</body>
+</html> -->
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌍 Live Location Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+    integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <style>
+    body, html { height: 100%; margin: 0; padding: 0; }
+    #map { height: calc(100vh - 60px); width: 100%; }
+    .leaflet-control-attribution { font-size: 0.75rem !important; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col">
+  <header class="flex justify-between items-center bg-gray-800 px-6 py-3 shadow-md">
+    <h1 class="text-lg font-semibold tracking-wide">🌍 Gautam Tracker</h1>
+    <div class="flex items-center gap-4">
+      <p id="coords" class="text-sm text-gray-300">Lat: —, Lng: —</p>
+      <span id="status" class="text-sm font-medium text-red-400">🔴 Disconnected</span>
+      <button id="darkModeBtn" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-600 transition">🌗</button>
+    </div>
+  </header>
+  <div id="map"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/script.js"></script>
 </body>
 </html>
