@@ -2,15 +2,16 @@
 
 A full-stack, real-time location tracking platform designed to visualize and share users’ live positions using GPS, Leaflet maps, and real-time socket communication — built for accuracy, simplicity, and modern design.
 
-Next.js badge → https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white&style=for-the-badge  
-Express.js badge → https://img.shields.io/badge/Express.js-000000?logo=express&logoColor=white&style=for-the-badge  
-Socket.IO badge → https://img.shields.io/badge/Socket.IO-black?logo=socket.io&style=for-the-badge  
-Leaflet badge → https://img.shields.io/badge/Leaflet-199900?logo=leaflet&logoColor=white&style=for-the-badge  
-Tailwind badge → https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white&style=for-the-badge  
-JavaScript badge → https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black&style=for-the-badge  
-OpenStreetMap badge → https://img.shields.io/badge/OpenStreetMap-7EBF50?logo=openstreetmap&logoColor=white&style=for-the-badge  
-Unsplash badge → https://img.shields.io/badge/Unsplash_API-000000?logo=unsplash&logoColor=white&style=for-the-badge  
-Render badge → https://img.shields.io/badge/Render-000000?logo=render&logoColor=white&style=for-the-badge  
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white&style=for-the-badge)
+![Express.js](https://img.shields.io/badge/Express.js-000000?logo=express&logoColor=white&style=for-the-badge)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-black?logo=socket.io&style=for-the-badge)
+![Leaflet](https://img.shields.io/badge/Leaflet-199900?logo=leaflet&logoColor=white&style=for-the-badge)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white&style=for-the-badge)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black&style=for-the-badge)
+![OpenStreetMap](https://img.shields.io/badge/OpenStreetMap-7EBF50?logo=openstreetmap&logoColor=white&style=for-the-badge)
+![Unsplash](https://img.shields.io/badge/Unsplash_API-000000?logo=unsplash&logoColor=white&style=for-the-badge)
+![Render](https://img.shields.io/badge/Render-000000?logo=render&logoColor=white&style=for-the-badge)
+
 
 ---
 
